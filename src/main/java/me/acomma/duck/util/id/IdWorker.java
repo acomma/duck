@@ -1,4 +1,4 @@
-package me.acomma.duck.common.id;
+package me.acomma.duck.util.id;
 
 /**
  * See <a href="https://github.com/twitter-archive/snowflake/blob/snowflake-2010/src/main/scala/com/twitter/service/snowflake/IdWorker.scala">Snowflake IdWorker</a>.

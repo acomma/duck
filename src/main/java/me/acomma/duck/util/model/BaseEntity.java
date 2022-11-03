@@ -1,4 +1,4 @@
-package me.acomma.duck.common.model;
+package me.acomma.duck.util.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,7 +11,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 基本实体类。大多数实体都应该继承该类，少数关系表或者中间表是否需要继承该类应该根据实际情况选择。
+ * 基础实体类。大多数实体都应该继承该类，少数关系表或者中间表是否需要继承该类应该根据实际情况选择。
  */
 @Getter
 @Setter

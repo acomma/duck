@@ -1,8 +1,8 @@
-package me.acomma.duck.dal.model.user;
+package me.acomma.duck.model.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.common.model.BaseEntity;
+import me.acomma.duck.util.model.BaseEntity;
 
 import java.io.Serial;
 

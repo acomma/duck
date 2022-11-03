@@ -1,4 +1,4 @@
-package me.acomma.duck.common.id;
+package me.acomma.duck.util.id;
 
 import java.security.SecureRandom;
 
