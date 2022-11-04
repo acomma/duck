@@ -1,4 +1,4 @@
-package me.acomma.duck.util.model;
+package me.acomma.duck.util;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,7 +7,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.io.Serial;
-import java.io.Serializable;
 
 /**
  * 分页查询命令。
@@ -17,7 +16,7 @@ import java.io.Serializable;
 @ToString
 @NoArgsConstructor
 @SuperBuilder
-public class PageCommand implements Serializable {
+public class PageCommand extends BaseCommand {
     @Serial
     private static final long serialVersionUID = 1589789068876302960L;
 

@@ -2,7 +2,7 @@ package me.acomma.duck.model.entity;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.util.model.BaseEntity;
+import me.acomma.duck.util.BaseEntity;
 
 import java.io.Serial;
 

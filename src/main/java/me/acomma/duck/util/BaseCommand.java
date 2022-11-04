@@ -1,4 +1,4 @@
-package me.acomma.duck.util.model;
+package me.acomma.duck.util;
 
 import java.io.Serial;
 import java.io.Serializable;
