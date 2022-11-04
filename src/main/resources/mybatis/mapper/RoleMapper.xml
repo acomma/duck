@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="me.acomma.duck.mapper.RoleMapper">
+    <resultMap id="BaseResultMap" type="me.acomma.duck.model.entity.RoleEntity">
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="create_time" jdbcType="TIMESTAMP" property="createTime"/>
+        <result column="update_time" jdbcType="TIMESTAMP" property="updateTime"/>
+        <result column="role_id" jdbcType="BIGINT" property="roleId"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        `id`,`create_time`,`update_time`,`role_id`,`name`
+    </sql>
+
+    <insert id="insert">
+        INSERT INTO `role`(`role_id`, `name`)
+        VALUES (#{roleId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteByRoleId">
+        DELETE FROM `role`
+        WHERE `role_id` = #{roleId,jdbcType=BIGINT}
+    </delete>
+
+    <update id="updateNameByRoleId">
+        UPDATE `role`
+        SET `name` = #{name,jdbcType=VARCHAR}
+        WHERE `role_id` = #{roleId,jdbcType=BIGINT}
+    </update>
+
+    <select id="findByRoleId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM `role`
+        WHERE `role_id` = #{roleId,jdbcType=BIGINT}
+    </select>
+</mapper>
