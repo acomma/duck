@@ -1,4 +1,4 @@
-package me.acomma.duck.util;
+package me.acomma.duck.util.command;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

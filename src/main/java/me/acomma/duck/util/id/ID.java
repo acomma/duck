@@ -26,6 +26,7 @@ public final class ID {
 
     /**
      * 生成下一个 ID。
+     *
      * @return 下一个 ID
      */
     public static long nextId() {
