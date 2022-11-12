@@ -11,7 +11,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
-public class ViolationExceptionHandler {
+public class ValidationExceptionHandler {
     @ExceptionHandler
     public RestResult<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         ObjectError error = exception.getAllErrors().get(0);
