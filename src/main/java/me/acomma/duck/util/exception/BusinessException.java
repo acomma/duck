@@ -1,7 +1,7 @@
 package me.acomma.duck.util.exception;
 
 import lombok.Getter;
-import me.acomma.duck.util.code.ErrorCode;
+import me.acomma.duck.util.code.BusinessErrorCode;
 
 import java.io.Serial;
 
@@ -13,25 +13,25 @@ public class BusinessException extends RuntimeException {
     @Serial
     private static final long serialVersionUID = 2356791864188814845L;
 
-    private final ErrorCode<Integer> errorCode;
+    private final BusinessErrorCode businessErrorCode;
 
-    public BusinessException(ErrorCode<Integer> errorCode) {
+    public BusinessException(BusinessErrorCode businessErrorCode) {
         super();
-        this.errorCode = errorCode;
+        this.businessErrorCode = businessErrorCode;
     }
 
-    public BusinessException(ErrorCode<Integer> errorCode, String message) {
+    public BusinessException(BusinessErrorCode businessErrorCode, String message) {
         super(message);
-        this.errorCode = errorCode;
+        this.businessErrorCode = businessErrorCode;
     }
 
-    public BusinessException(ErrorCode<Integer> errorCode, String message, Throwable cause) {
+    public BusinessException(BusinessErrorCode businessErrorCode, String message, Throwable cause) {
         super(message, cause);
-        this.errorCode = errorCode;
+        this.businessErrorCode = businessErrorCode;
     }
 
-    public BusinessException(ErrorCode<Integer> errorCode, Throwable cause) {
+    public BusinessException(BusinessErrorCode businessErrorCode, Throwable cause) {
         super(cause);
-        this.errorCode = errorCode;
+        this.businessErrorCode = businessErrorCode;
     }
 }
