@@ -22,7 +22,12 @@ public enum SystemErrorCode implements ErrorCode<Integer> {
     /**
      * 连接数据库失败或者执行 SQL 失败时使用的错误码。
      */
-    ACCESS_DATABASE_FAILED(3, "访问数据库失败");
+    ACCESS_DATABASE_FAILED(3, "访问数据库失败"),
+
+    /**
+     * 解析或生成 JSON 格式数据失败时使用的错误码。
+     */
+    PROCESS_JSON_FAILED(4, "处理 JSON 数据失败");
 
     /**
      * 错误码。
