@@ -9,14 +9,16 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.sql.SQLException;
+
 @RestControllerAdvice
-@Order(Ordered.LOWEST_PRECEDENCE - 1)
+@Order(Ordered.LOWEST_PRECEDENCE - 2)
 @Slf4j
-public class GlobalExceptionHandler {
+public class DatabaseExceptionHandler {
     @ExceptionHandler
-    public RestResult<Void> handleException(Exception exception) {
-        log.error("发生未知异常", exception);
-        ErrorCode<Integer> errorCode = SystemErrorCode.SYSTEM_ERROR;
+    public RestResult<Void> handleSQLException(SQLException exception) {
+        log.error("访问数据库异常", exception);
+        ErrorCode<Integer> errorCode = SystemErrorCode.ACCESS_DATABASE_FAILED;
         return RestResult.<Void>builder().code(errorCode.code()).message(errorCode.message()).build();
     }
 }

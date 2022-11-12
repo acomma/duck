@@ -17,7 +17,12 @@ public enum SystemErrorCode implements ErrorCode<Integer> {
     /**
      * 一般是用户传入的参数非法引起的，请仔细检查入参格式、范围是否一一对应。
      */
-    INVALID_PARAMETER(2, "参数无效");
+    INVALID_PARAMETER(2, "参数无效"),
+
+    /**
+     * 连接数据库失败或者执行 SQL 失败时使用的错误码。
+     */
+    ACCESS_DATABASE_FAILED(3, "访问数据库失败");
 
     /**
      * 错误码。
