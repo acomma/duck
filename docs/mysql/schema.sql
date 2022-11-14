@@ -27,7 +27,7 @@ CREATE TABLE `menu` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   `menu_id` bigint NOT NULL COMMENT '菜单ID',
-  `parent_id` bigint DEFAULT NULL COMMENT '上级ID',
+  `parent_id` bigint NOT NULL DEFAULT '0' COMMENT '上级ID',
   `name` varchar(32) CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL COMMENT '菜单名称',
   `path` varchar(255) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '菜单路径',
   PRIMARY KEY (`id`),

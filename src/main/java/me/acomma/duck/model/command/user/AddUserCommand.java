@@ -1,30 +1,25 @@
-package me.acomma.duck.model.entity;
+package me.acomma.duck.model.command.user;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.util.BaseEntity;
+import me.acomma.duck.util.command.BaseCommand;
 
 import java.io.Serial;
 
 /**
- * 用户。
+ * 新增用户命令。
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder
-public class UserEntity extends BaseEntity {
+public class AddUserCommand extends BaseCommand {
     @Serial
-    private static final long serialVersionUID = -419467560420367692L;
-
-    /**
-     * 用户 ID。
-     */
-    private Long userId;
+    private static final long serialVersionUID = -8728053098642902310L;
 
     /**
      * 用户名。
@@ -34,6 +29,5 @@ public class UserEntity extends BaseEntity {
     /**
      * 密码。
      */
-    @ToString.Exclude
     private String password;
 }

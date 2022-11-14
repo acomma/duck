@@ -4,6 +4,8 @@ import me.acomma.duck.model.entity.MenuEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 菜单数据访问对象。
  */
@@ -40,4 +42,21 @@ public interface MenuMapper {
      * @return 菜单实体类
      */
     MenuEntity findByMenuId(@Param("menuId") Long menuId);
+
+    /**
+     * 根据上级 ID 和菜单名称查询菜单。
+     *
+     * @param parentId 菜单 ID
+     * @param name     菜单名称
+     * @return 菜单
+     */
+    MenuEntity findByParentIdAndName(@Param("parentId") Long parentId, @Param("name") String name);
+
+    /**
+     * 根据菜单 ID 列表查询菜单。
+     *
+     * @param menuIds 菜单 ID 列表
+     * @return 菜单列表
+     */
+    List<MenuEntity> listByMenuIds(@Param("menuIds") List<Long> menuIds);
 }

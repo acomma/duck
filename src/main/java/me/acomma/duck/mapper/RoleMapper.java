@@ -4,6 +4,8 @@ import me.acomma.duck.model.entity.RoleEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 /**
  * 角色数据访问对象。
  */
@@ -41,4 +43,20 @@ public interface RoleMapper {
      * @return 角色实体类
      */
     RoleEntity findByRoleId(@Param("roleId") Long roleId);
+
+    /**
+     * 根据角色名称查询角色。
+     *
+     * @param name 角色名称
+     * @return 角色实体类
+     */
+    RoleEntity findByName(@Param("name") String name);
+
+    /**
+     * 根据角色 ID 列表查询角色。
+     *
+     * @param roleIds 角色 ID 列表
+     * @return 角色列表
+     */
+    List<RoleEntity> listByRoleIds(@Param("roleIds") List<Long> roleIds);
 }

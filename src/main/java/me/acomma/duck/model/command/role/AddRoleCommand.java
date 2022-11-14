@@ -1,30 +1,25 @@
-package me.acomma.duck.model.entity;
+package me.acomma.duck.model.command.role;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.util.BaseEntity;
+import me.acomma.duck.util.command.BaseCommand;
 
 import java.io.Serial;
 
 /**
- * 角色。
+ * 新增角色命令。
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder
-public class RoleEntity extends BaseEntity {
+public class AddRoleCommand extends BaseCommand {
     @Serial
-    private static final long serialVersionUID = -2382143108168041114L;
-
-    /**
-     * 角色 ID。
-     */
-    private Long roleId;
+    private static final long serialVersionUID = 249135999265237280L;
 
     /**
      * 角色名称。

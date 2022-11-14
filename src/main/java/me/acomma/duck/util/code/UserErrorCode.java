@@ -6,7 +6,9 @@ import me.acomma.duck.util.Module;
  * 用户模块的错误码。
  */
 public enum UserErrorCode implements BusinessErrorCode {
-    USER_EXIST(1, "用户已经存在");
+    USER_EXIST(1, "用户已经存在"),
+
+    USER_NOT_EXIST(2, "用户不存在");
 
     /**
      * 错误编号。

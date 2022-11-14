@@ -1,25 +1,25 @@
-package me.acomma.duck.model.entity;
+package me.acomma.duck.web.view;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.util.BaseEntity;
+import me.acomma.duck.util.BaseView;
 
 import java.io.Serial;
 
 /**
- * 菜单。
+ * 角色视图。
  */
 @Getter
 @Setter
 @ToString(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder
-public class MenuEntity extends BaseEntity {
+public class MenuView extends BaseView {
     @Serial
-    private static final long serialVersionUID = 3107186607942064035L;
+    private static final long serialVersionUID = -3266398975515932996L;
 
     /**
      * 菜单 ID。

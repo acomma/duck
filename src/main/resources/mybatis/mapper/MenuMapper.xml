@@ -16,7 +16,7 @@
     </sql>
 
     <insert id="insert">
-        INSERT INTO `menu`(`menu_id`, `parent_id`, `name`, `path` )
+        INSERT INTO `menu`(`menu_id`, `parent_id`, `name`, `path`)
         VALUES (#{menuId,jdbcType=BIGINT}, #{parentId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{path,jdbcType=VARCHAR})
     </insert>
 
@@ -37,5 +37,18 @@
         SELECT <include refid="Base_Column_List"/>
         FROM `menu`
         WHERE `menu_id` = #{menuId,jdbcType=BIGINT}
+    </select>
+
+    <select id="findByParentIdAndName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM `menu`
+        WHERE `parent_id` = #{parentId,jdbcType=BIGINT}
+            AND `name` = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="listByMenuIds" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM `menu`
+        WHERE `menu_id` IN (<foreach collection="menuIds" item="menuId" separator=",">#{menuId,jdbcType=BIGINT}</foreach>)
     </select>
 </mapper>

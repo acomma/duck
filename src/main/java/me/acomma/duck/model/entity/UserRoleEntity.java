@@ -10,7 +10,7 @@ import me.acomma.duck.util.BaseEntity;
 import java.io.Serial;
 
 /**
- * 用户角色实体类。
+ * 用户角色。
  */
 @Getter
 @Setter

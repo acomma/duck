@@ -1,25 +1,25 @@
-package me.acomma.duck.model.entity;
+package me.acomma.duck.web.view;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import me.acomma.duck.util.BaseEntity;
+import me.acomma.duck.util.BaseView;
 
 import java.io.Serial;
 
 /**
- * 用户。
+ * 用户视图类。
  */
 @Getter
 @Setter
-@ToString(callSuper = true)
+@ToString
 @NoArgsConstructor
 @SuperBuilder
-public class UserEntity extends BaseEntity {
+public class UserView extends BaseView {
     @Serial
-    private static final long serialVersionUID = -419467560420367692L;
+    private static final long serialVersionUID = -6577307798453751781L;
 
     /**
      * 用户 ID。
@@ -30,10 +30,4 @@ public class UserEntity extends BaseEntity {
      * 用户名。
      */
     private String username;
-
-    /**
-     * 密码。
-     */
-    @ToString.Exclude
-    private String password;
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class BusinessExceptionHandler {
     @ExceptionHandler
     public RestResult<Void> handleBusinessException(BusinessException exception) {
-        log.info("发生业务异常", exception);
+        log.error("发生业务异常", exception);
         BusinessErrorCode businessErrorCode = exception.getBusinessErrorCode();
         return RestResult.<Void>builder().code(businessErrorCode.code()).message(businessErrorCode.message()).build();
     }

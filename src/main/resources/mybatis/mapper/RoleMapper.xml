@@ -34,4 +34,16 @@
         FROM `role`
         WHERE `role_id` = #{roleId,jdbcType=BIGINT}
     </select>
+
+    <select id="findByName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM `role`
+        WHERE `name` = #{name,jdbcType=VARCHAR}
+    </select>
+
+    <select id="listByRoleIds" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM `role`
+        WHERE `role_id` IN (<foreach collection="roleIds" item="roleId" separator=",">#{roleId,jdbcType=BIGINT}</foreach>)
+    </select>
 </mapper>

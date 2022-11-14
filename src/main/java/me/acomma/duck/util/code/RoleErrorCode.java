@@ -6,7 +6,9 @@ import me.acomma.duck.util.Module;
  * 角色模块的错误码。
  */
 public enum RoleErrorCode implements BusinessErrorCode {
-    ROLE_EXIST(1, "角色已经存在");
+    ROLE_EXIST(1, "角色已经存在"),
+
+    ROLE_NOT_EXIST(2, "角色不存在");
 
     /**
      * 错误编号。
