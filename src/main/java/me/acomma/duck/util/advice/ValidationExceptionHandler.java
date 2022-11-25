@@ -1,4 +1,4 @@
-package me.acomma.duck.web.advice;
+package me.acomma.duck.util.advice;
 
 import me.acomma.duck.util.RestResult;
 import me.acomma.duck.util.code.SystemErrorCode;

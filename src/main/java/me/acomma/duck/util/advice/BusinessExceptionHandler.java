@@ -1,4 +1,4 @@
-package me.acomma.duck.web.advice;
+package me.acomma.duck.util.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import me.acomma.duck.util.RestResult;

@@ -1,4 +1,4 @@
-package me.acomma.duck.web.advice;
+package me.acomma.duck.util.advice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
