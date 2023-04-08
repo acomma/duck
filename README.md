@@ -1,1 +1,1 @@
-![](docs/hierarchical-domain-model-specification.excalidraw.png)
+![](docs/hierarchical-domain-model-specification.excalidraw.svg)
