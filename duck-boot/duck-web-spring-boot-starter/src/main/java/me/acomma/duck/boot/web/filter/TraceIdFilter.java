@@ -1,4 +1,4 @@
-package me.acomma.duck.util.filter;
+package me.acomma.duck.boot.web.filter;
 
 import org.slf4j.MDC;
 import org.springframework.boot.web.servlet.filter.OrderedFilter;

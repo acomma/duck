@@ -1,4 +1,4 @@
-package me.acomma.duck.util.advice;
+package me.acomma.duck.boot.web.advice;
 
 import lombok.extern.slf4j.Slf4j;
 import me.acomma.duck.util.RestResult;
@@ -9,16 +9,14 @@ import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.sql.SQLException;
-
 @RestControllerAdvice
-@Order(Ordered.LOWEST_PRECEDENCE - 2)
+@Order(Ordered.LOWEST_PRECEDENCE - 1)
 @Slf4j
-public class DatabaseExceptionHandler {
+public class GlobalExceptionHandler {
     @ExceptionHandler
-    public RestResult<Void> handleSQLException(SQLException exception) {
-        log.error("访问数据库异常", exception);
-        ErrorCode<Integer> errorCode = SystemErrorCode.ACCESS_DATABASE_FAILED;
+    public RestResult<Void> handleException(Exception exception) {
+        log.error("发生未知异常", exception);
+        ErrorCode<Integer> errorCode = SystemErrorCode.SYSTEM_ERROR;
         return RestResult.<Void>builder().code(errorCode.code()).message(errorCode.message()).build();
     }
 }
