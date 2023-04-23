@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>me.acomma.duck</groupId>
-    <artifactId>duck</artifactId>
+    <artifactId>duck-parent</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
