@@ -1,6 +1,9 @@
 package me.acomma.duck.boot.lock;
 
+import java.io.Serial;
+
 public class DistributedLockException extends RuntimeException {
+    @Serial
     private static final long serialVersionUID = -7013755050276153103L;
 
     public DistributedLockException() {

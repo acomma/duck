@@ -22,12 +22,13 @@ public class RedisDistributedLockMonitor {
     /**
      * 续期脚本. 只有当锁定的健存在并且存储在该健中的值正是我们期望的值时才重新设置过期时间, 这是为了防止设置由其他线程获得的锁的过期时间.
      */
-    private static final String RENEW_SCRIPT =
-            "if redis.call('GET',KEYS[1]) == ARGV[1] then\n" +
-                    "  return redis.call('PEXPIRE',KEYS[1],ARGV[2])\n" +
-                    "else\n" +
-                    "  return 0\n" +
-                    "end";
+    private static final String RENEW_SCRIPT = """
+            if redis.call('GET',KEYS[1]) == ARGV[1] then
+              return redis.call('PEXPIRE',KEYS[1],ARGV[2])
+            else
+              return 0
+            end
+            """;
 
     private final RedisTemplate<String, String> redisTemplate;
 

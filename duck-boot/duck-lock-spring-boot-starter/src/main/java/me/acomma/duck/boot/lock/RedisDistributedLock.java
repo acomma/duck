@@ -24,12 +24,13 @@ public class RedisDistributedLock implements DistributedLock {
     /**
      * 释放锁的脚本. 只有当锁定的健存在并且存储在该健中的值正是我期望的值时才删除该健, 这是为了防止释放由其他线程获得的锁.
      */
-    private static final String UNLOCK_SCRIPT =
-            "if redis.call('GET',KEYS[1]) == ARGV[1] then\n" +
-                    "  return redis.call('DEL',KEYS[1])\n" +
-                    "else\n" +
-                    "  return 0\n" +
-                    "end";
+    private static final String UNLOCK_SCRIPT = """
+            if redis.call('GET',KEYS[1]) == ARGV[1] then
+              return redis.call('DEL',KEYS[1])
+            else
+              return 0
+            end
+            """;
 
     private final RedisTemplate<String, String> redisTemplate;
 
