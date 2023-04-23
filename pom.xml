@@ -10,7 +10,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>me.acomma</groupId>
+    <groupId>me.acomma.duck</groupId>
     <artifactId>duck</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
