@@ -1,2 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  me.acomma.duck.boot.jdbc.DuckDataSourceAutoConfiguration
