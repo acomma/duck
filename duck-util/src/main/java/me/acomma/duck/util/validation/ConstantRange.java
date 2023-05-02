@@ -24,7 +24,7 @@ import java.util.Objects;
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.PARAMETER, ElementType.TYPE_USE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Constraint(validatedBy = {ConstantRange.ConstantRangeValidator.class})
+@Constraint(validatedBy = {ConstantRange.Validator.class})
 public @interface ConstantRange {
     /**
      * @return 错误消息
@@ -64,7 +64,7 @@ public @interface ConstantRange {
     /**
      * 常量取值范围验证器.
      */
-    class ConstantRangeValidator implements ConstraintValidator<ConstantRange, Integer> {
+    class Validator implements ConstraintValidator<ConstantRange, Integer> {
         private List<Integer> values;
 
         @Override
