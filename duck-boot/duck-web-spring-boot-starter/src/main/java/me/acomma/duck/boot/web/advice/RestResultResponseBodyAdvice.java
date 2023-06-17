@@ -13,6 +13,10 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
+import javax.annotation.PostConstruct;
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 统一处理响应数据的格式，代码大部分来自 <a href="https://mp.weixin.qq.com/s/zUrx7duy0-OY1oYn8FeKOw">SpringBoot 实战：一招实现结果的优雅响应</a>。
  */
@@ -21,8 +25,21 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class RestResultResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final Set<String> IGNORED_CLASS_NAME_LIST = new HashSet<>(3);
+
+    @PostConstruct
+    public void init() {
+        IGNORED_CLASS_NAME_LIST.add("org.springdoc.webmvc.ui.SwaggerConfigResource");
+        IGNORED_CLASS_NAME_LIST.add("org.springdoc.webmvc.ui.SwaggerWelcomeWebMvc");
+        IGNORED_CLASS_NAME_LIST.add("org.springdoc.webmvc.api.OpenApiWebMvcResource");
+    }
+
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
+        // 不处理 SpringDoc 的接口
+        if (IGNORED_CLASS_NAME_LIST.contains(returnType.getDeclaringClass().getName())) {
+            return false;
+        }
         // 只处理 Controller 方法的返回值的类型不是 RestResult 的方法
         return !returnType.getGenericParameterType().equals(RestResult.class);
     }

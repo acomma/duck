@@ -18,5 +18,6 @@
         <module>duck-jdbc-spring-boot-starter</module>
         <module>duck-lock-spring-boot-starter</module>
         <module>duck-cache-spring-boot-starter</module>
+        <module>duck-springdoc-spring-boot-starter</module>
     </modules>
 </project>
