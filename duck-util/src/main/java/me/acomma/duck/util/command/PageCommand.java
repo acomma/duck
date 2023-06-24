@@ -1,5 +1,6 @@
 package me.acomma.duck.util.command;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,10 +24,12 @@ public class PageCommand extends BaseCommand {
     /**
      * 当前查询的页码，即需要查询第几页的数据，默认查询第 1 页。
      */
+    @Builder.Default
     private int pageNumber = 1;
 
     /**
      * 每一页需要查询的数据量的大小，默认每一页查询 10 条数据。
      */
+    @Builder.Default
     private int pageSize = 10;
 }

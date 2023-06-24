@@ -20,4 +20,13 @@
         <module>duck-cache-spring-boot-starter</module>
         <module>duck-springdoc-spring-boot-starter</module>
     </modules>
+
+    <dependencies>
+        <!-- 解决：未知的枚举常量 javax.annotation.meta.When.MAYBE -->
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
+            <version>3.0.2</version>
+        </dependency>
+    </dependencies>
 </project>
