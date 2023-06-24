@@ -6,19 +6,19 @@ import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
 import org.apache.commons.lang3.ArrayUtils;
-import org.springdoc.core.GenericResponseService;
-import org.springdoc.core.OperationService;
-import org.springdoc.core.PropertyResolverUtils;
-import org.springdoc.core.ReturnTypeParser;
-import org.springdoc.core.SpringDocAnnotationsUtils;
-import org.springdoc.core.SpringDocConfigProperties;
+import org.springdoc.core.parsers.ReturnTypeParser;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.service.GenericResponseService;
+import org.springdoc.core.service.OperationService;
+import org.springdoc.core.utils.PropertyResolverUtils;
+import org.springdoc.core.utils.SpringDocAnnotationsUtils;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.springdoc.core.SpringDocAnnotationsUtils.extractSchema;
+import static org.springdoc.core.utils.SpringDocAnnotationsUtils.extractSchema;
 
 /**
  * 返回值类型为 {@code void} 时也需要构建 {@link Content}。

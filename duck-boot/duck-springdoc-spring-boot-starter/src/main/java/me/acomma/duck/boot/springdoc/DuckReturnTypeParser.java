@@ -2,7 +2,7 @@ package me.acomma.duck.boot.springdoc;
 
 import me.acomma.duck.util.RestResult;
 import org.apache.commons.lang3.reflect.TypeUtils;
-import org.springdoc.core.ReturnTypeParser;
+import org.springdoc.core.parsers.ReturnTypeParser;
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.annotation.RestController;
 

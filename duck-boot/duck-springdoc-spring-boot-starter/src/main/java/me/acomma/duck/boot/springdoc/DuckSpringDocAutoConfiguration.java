@@ -1,9 +1,9 @@
 package me.acomma.duck.boot.springdoc;
 
-import org.springdoc.core.OperationService;
-import org.springdoc.core.PropertyResolverUtils;
-import org.springdoc.core.ReturnTypeParser;
-import org.springdoc.core.SpringDocConfigProperties;
+import org.springdoc.core.parsers.ReturnTypeParser;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.service.OperationService;
+import org.springdoc.core.utils.PropertyResolverUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

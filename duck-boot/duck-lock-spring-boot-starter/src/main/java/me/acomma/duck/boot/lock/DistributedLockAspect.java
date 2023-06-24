@@ -4,8 +4,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.core.Ordered;
+import org.springframework.core.StandardReflectionParameterNameDiscoverer;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -34,7 +34,7 @@ public class DistributedLockAspect implements Ordered {
     @Around("@annotation(lockable)")
     public Object locking(ProceedingJoinPoint proceedingJoinPoint, Lockable lockable) throws Throwable {
         ExpressionParser parser = new SpelExpressionParser();
-        LocalVariableTableParameterNameDiscoverer discoverer = new LocalVariableTableParameterNameDiscoverer();
+        StandardReflectionParameterNameDiscoverer discoverer = new StandardReflectionParameterNameDiscoverer();
         EvaluationContext context = new StandardEvaluationContext();
 
         Object[] args = proceedingJoinPoint.getArgs();

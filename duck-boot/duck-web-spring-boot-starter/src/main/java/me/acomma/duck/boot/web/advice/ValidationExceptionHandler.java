@@ -1,5 +1,7 @@
 package me.acomma.duck.boot.web.advice;
 
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import me.acomma.duck.util.RestResult;
 import me.acomma.duck.util.code.SystemErrorCode;
 import org.springframework.core.Ordered;
@@ -8,9 +10,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 
 @RestControllerAdvice
 @Order(Ordered.LOWEST_PRECEDENCE - 4)

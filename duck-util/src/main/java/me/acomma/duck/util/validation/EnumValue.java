@@ -1,9 +1,10 @@
 package me.acomma.duck.util.validation;
 
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-import javax.validation.Payload;
+import jakarta.validation.Constraint;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
+import jakarta.validation.Payload;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -38,7 +39,7 @@ import java.util.List;
  *     private Integer gender;
  * }
  * }</pre>
- *
+ * <p>
  * 参考资料：
  * <ul>
  *     <li><a href="https://www.jianshu.com/p/14fc8c739ce8">自定义 javax.validation 校验枚举类</a></li>

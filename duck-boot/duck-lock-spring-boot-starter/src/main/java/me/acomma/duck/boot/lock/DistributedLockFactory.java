@@ -1,8 +1,7 @@
 package me.acomma.duck.boot.lock;
 
+import jakarta.annotation.PostConstruct;
 import org.springframework.data.redis.core.RedisTemplate;
-
-import javax.annotation.PostConstruct;
 
 /**
  * 创建分布式锁的工厂.
