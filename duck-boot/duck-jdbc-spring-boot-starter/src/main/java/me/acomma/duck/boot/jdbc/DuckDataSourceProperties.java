@@ -1,21 +1,22 @@
 package me.acomma.duck.boot.jdbc;
 
+import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * @see org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
+ */
 @ConfigurationProperties(prefix = DuckDataSourceProperties.PREFIX)
-public class DuckDataSourceProperties {
+public class DuckDataSourceProperties implements BeanClassLoaderAware {
     public static final String PREFIX = "duck.datasource";
+    private ClassLoader classLoader;
 
-    /**
-     * 是否启用数据源自动配置.
-     */
-    private boolean enable = true;
-
-    public boolean isEnable() {
-        return enable;
+    @Override
+    public void setBeanClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
-    public void setEnable(boolean enable) {
-        this.enable = enable;
+    public ClassLoader getClassLoader() {
+        return this.classLoader;
     }
 }
