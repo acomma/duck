@@ -44,20 +44,25 @@ ID 生成器使用了雪花算法，模仿 MongoDB 的 `ObjectId` 生成 `datace
 ```yaml
 duck:
   datasource:
-    primary:
-      jdbc-url: jdbc:mysql://localhost:3306/duck_primary?characterEncoding=UTF-8&serverTimezone=GMT%2B8
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      username: root
-      password: 123456
-    replica:
-      jdbc-url: jdbc:mysql://localhost:3306/duck_replica?characterEncoding=UTF-8&serverTimezone=GMT%2B8
-      driver-class-name: com.mysql.cj.jdbc.Driver
-      username: root
-      password: 123456
+    hikari:
+      primary:
+        jdbc-url: jdbc:mysql://localhost:3306/duck_primary?characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+        password: 123456
+      replica:
+        jdbc-url: jdbc:mysql://localhost:3306/duck_replica?characterEncoding=UTF-8&serverTimezone=GMT%2B8
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        username: root
+        password: 123456
 ```
 
-默认使用主库，可以使用 `DataSourceSelector` 切换从库。
+默认使用主库，可以使用 `@DataSourceSelector` 注解切换从库。
 
 ## 缓存扩展
 
-在使用 Spring Cache 的基础上使用 `CacheExtension` 注解定义缓存过期时间。
+在使用 Spring Cache 的基础上使用 `@CacheExtension` 注解定义缓存过期时间。
+
+## Swagger 文档
+
+增强 SpringDoc 文档，无论 `Controller` 方法返回值是否是 `ResultResult` 类均有一致的文档结构。
