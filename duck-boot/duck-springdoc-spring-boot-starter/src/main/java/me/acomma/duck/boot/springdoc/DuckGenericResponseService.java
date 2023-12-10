@@ -24,6 +24,8 @@ import static org.springdoc.core.utils.SpringDocAnnotationsUtils.extractSchema;
  * 返回值类型为 {@code void} 时也需要构建 {@link Content}。
  */
 public class DuckGenericResponseService extends GenericResponseService {
+    private final PropertyResolverUtils propertyResolverUtils;
+
     /**
      * Instantiates a new Generic response builder.
      *
@@ -34,6 +36,7 @@ public class DuckGenericResponseService extends GenericResponseService {
      */
     public DuckGenericResponseService(OperationService operationService, List<ReturnTypeParser> returnTypeParsers, SpringDocConfigProperties springDocConfigProperties, PropertyResolverUtils propertyResolverUtils) {
         super(operationService, returnTypeParsers, springDocConfigProperties, propertyResolverUtils);
+        this.propertyResolverUtils = propertyResolverUtils;
     }
 
     @Override
@@ -60,7 +63,7 @@ public class DuckGenericResponseService extends GenericResponseService {
     private Schema<?> calculateSchema(Components components, Type returnType, JsonView jsonView, Annotation[] annotations) {
         // 去掉了父类的 !isVoid(returnType) 判断
         if (!SpringDocAnnotationsUtils.isAnnotationToIgnore(returnType))
-            return extractSchema(components, returnType, jsonView, annotations);
+            return extractSchema(components, returnType, jsonView, annotations, propertyResolverUtils.getSpecVersion());
         return null;
     }
 
