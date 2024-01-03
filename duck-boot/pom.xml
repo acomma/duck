@@ -19,6 +19,7 @@
         <module>duck-lock-spring-boot-starter</module>
         <module>duck-cache-spring-boot-starter</module>
         <module>duck-springdoc-spring-boot-starter</module>
+        <module>duck-rpc-spring-boot-starter</module>
     </modules>
 
     <dependencies>
