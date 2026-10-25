@@ -1,13 +1,13 @@
 package me.acomma.duck.mybatis.type;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 
+import java.lang.reflect.Type;
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,11 +25,23 @@ import java.util.Objects;
  *
  * <p>{@code type.postgres} 中也有一个同名的 {@link me.acomma.duck.mybatis.type.postgres.BaseJsonTypeHandler}，它继承本类并覆盖默认绑定；两者简单名相同，靠包名区分。
  *
- * <p>目标类型支持两种描述方式：
+ * <h2>目标类型</h2>
+ * <p>目标 Java 类型用 {@link Type} 描述，构造器拿到什么就按什么反序列化：
  * <ul>
- * <li>{@link Class}：适用于普通 Bean；任何带类型参数的类（集合、{@code Map}、{@code Iterable}、{@code Optional}、{@code Map.Entry}、自定义泛型容器/泛型 Bean 等）都无法在运行期保留实参，请改用 {@link TypeReference}；元素为这些类型的数组（如 {@code List<Foo>[]}）同样会被拒绝。具体集合/Map 子类如果自身没有类型参数（如 {@code class Tags extends ArrayList<String>}）仍可用 {@code Class}；{@link Class} 自身是一个例外，按标量目标处理；</li>
- * <li>{@link TypeReference}：保留完整泛型信息，例如 {@code new TypeReference<List<Foo>>() {}}。</li>
+ * <li>{@link Class}：普通 Bean、标量，以及没有类型参数的集合/Map 子类（如 {@code class Tags extends ArrayList<String>}）；</li>
+ * <li>{@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType}：集合、{@code Map}、{@code Optional}、{@code Map.Entry}、自定义泛型容器，以及它们的数组（如 {@code List<Foo>[]}）。</li>
  * </ul>
+ *
+ * <p>MyBatis 3.6.0 起，{@code @Result} / {@code #{..., typeHandler=...}} 会把<strong>属性或参数的完整泛型类型</strong>传给处理器的 {@code (Type)} 构造器（见 {@code TypeHandlerRegistry#getInstance(Type, Class)}），
+ * 因此一个处理器就能覆盖所有目标类型，不需要为每种元素类型准备固定类型的子类：
+ * <pre>{@code
+ * @Results(id = "foo", value = {
+ *         // 属性是 List<Foo> 时，MyBatis 传入的就是 ParameterizedType java.util.List<Foo>
+ *         @Result(column = "tags", property = "tags", typeHandler = JsonTypeHandler.class),
+ * })
+ * }</pre>
+ *
+ * <p>仍然拒绝用原始 {@link Class} 描述带类型参数的类：{@code List.class} 在运行期不携带元素类型，静默按 {@code List<Object>} 处理只会把错误推迟到读取阶段。合法的泛型目标请用 {@link Type} 构造器描述。
  *
  * <p>未显式传入 {@link ObjectMapper} 的构造器在构造时取 {@link ObjectMapperHolder#getDefault()}。
  * 应用应在 MyBatis 解析 mapper、构造处理器之前调用一次 {@link ObjectMapperHolder#setDefault(ObjectMapper)} 配置默认 mapper；之后再替换只影响新构造的处理器。显式传入 mapper 的构造器不受全局配置影响。
@@ -42,20 +54,36 @@ public abstract class BaseJsonTypeHandler<T> extends BaseTypeHandler<T> {
     private final ObjectMapper objectMapper;
     private final JavaType javaType;
 
+    /**
+     * @param type 目标 Java 类型；必须是完整类型，带类型参数的类请改用 {@link #BaseJsonTypeHandler(Type)}
+     */
     protected BaseJsonTypeHandler(Class<T> type) {
         this(ObjectMapperHolder.getDefault(), type);
     }
 
+    /**
+     * @param objectMapper 本处理器专用的 mapper，不能为 {@code null}
+     * @param type         目标 Java 类型；必须是完整类型，带类型参数的类请改用 {@link #BaseJsonTypeHandler(ObjectMapper, Type)}
+     */
     protected BaseJsonTypeHandler(ObjectMapper objectMapper, Class<T> type) {
-        this(objectMapper, javaType(objectMapper, requireConcreteClass(type)));
+        this(objectMapper, (Type) type);
     }
 
-    protected BaseJsonTypeHandler(TypeReference<T> typeReference) {
-        this(ObjectMapperHolder.getDefault(), typeReference);
+    /**
+     * MyBatis 3.6.0 起按属性/参数的泛型类型反射调用本构造器，因此集合、{@code Map} 等泛型目标不需要再写固定类型的子类。
+     *
+     * @param type 目标 Java 类型，可以是 {@link Class}、{@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType}
+     */
+    protected BaseJsonTypeHandler(Type type) {
+        this(ObjectMapperHolder.getDefault(), type);
     }
 
-    protected BaseJsonTypeHandler(ObjectMapper objectMapper, TypeReference<T> typeReference) {
-        this(objectMapper, javaType(objectMapper, typeReference));
+    /**
+     * @param objectMapper 本处理器专用的 mapper，不能为 {@code null}
+     * @param type         目标 Java 类型，可以是 {@link Class}、{@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType}
+     */
+    protected BaseJsonTypeHandler(ObjectMapper objectMapper, Type type) {
+        this(objectMapper, javaType(objectMapper, type));
     }
 
     private BaseJsonTypeHandler(ObjectMapper objectMapper, JavaType javaType) {
@@ -63,34 +91,33 @@ public abstract class BaseJsonTypeHandler<T> extends BaseTypeHandler<T> {
         this.javaType = Objects.requireNonNull(javaType, "javaType");
     }
 
-    private static JavaType javaType(ObjectMapper objectMapper, Class<?> type) {
-        return Objects.requireNonNull(objectMapper, "objectMapper")
-                .getTypeFactory()
-                .constructType(Objects.requireNonNull(type, "type"));
-    }
-
-    private static JavaType javaType(ObjectMapper objectMapper, TypeReference<?> typeReference) {
-        return Objects.requireNonNull(objectMapper, "objectMapper")
-                .getTypeFactory()
-                .constructType(Objects.requireNonNull(typeReference, "typeReference"));
+    private static JavaType javaType(ObjectMapper objectMapper, Type type) {
+        Objects.requireNonNull(objectMapper, "objectMapper");
+        requireResolvableType(type);
+        return objectMapper.getTypeFactory().constructType(type);
     }
 
     /**
-     * 带类型参数的类在运行期被擦除，只传 {@code Class} 会得到 {@code List<Object>} 一类的类型，因此统一拒绝；数组先展开到元素类型再判断。
-     * 具体集合/Map 子类如果自身没有类型参数（如 {@code class Tags extends ArrayList<String>}）可以用 {@code Class}；{@link Class} 自身带类型参数，但是合法的标量目标，单独放行。
+     * 只有原始 {@link Class} 会丢失泛型实参：带类型参数的类（集合、{@code Map}、{@code Optional}、自定义泛型 Bean/容器等）用 {@code Class} 描述时无法还原实参，直接拒绝；
+     * {@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType} 已经带有实参，放行。
+     * 数组先展开到元素类型再判断；{@link Class} 自身带类型参数，但它是合法的标量目标，单独放行。
      */
-    protected static <E> Class<E> requireConcreteClass(Class<E> type) {
+    protected static void requireResolvableType(Type type) {
         Objects.requireNonNull(type, "type");
+        if (!(type instanceof Class<?> clazz)) {
+            return;
+        }
 
-        Class<?> componentType = type;
+        Class<?> componentType = clazz;
         while (componentType.isArray()) {
             componentType = componentType.getComponentType();
         }
 
         if (componentType != Class.class && componentType.getTypeParameters().length > 0) {
-            throw new IllegalArgumentException("Generic type requires a TypeReference: " + type.getTypeName());
+            throw new IllegalArgumentException("Cannot resolve the JSON target type " + clazz.getTypeName() + ": a raw Class erases its type arguments."
+                    + " Describe the target with a java.lang.reflect.Type (MyBatis passes the property's generic type to the (Type) constructor since 3.6.0),"
+                    + " or let MyBatis resolve it by specifying the handler in @Result / #{...} instead of constructing the handler from a raw Class.");
         }
-        return type;
     }
 
     /**

@@ -1,12 +1,12 @@
 package me.acomma.duck.mybatis.type.postgres;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import me.acomma.duck.mybatis.type.ObjectMapperHolder;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeException;
 import org.postgresql.util.PGobject;
 
+import java.lang.reflect.Type;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
@@ -22,11 +22,12 @@ import java.util.Set;
  * <p>写入时按 {@link PGobject} 绑定列类型，读取时按字符串读出后反序列化；具体列类型（{@code json} 或 {@code jsonb}）与目标 Java 类型由子类构造器传入。
  * 以 {@code text}/{@code varchar} 等文本列保存 JSON 时请改用根包的 {@link me.acomma.duck.mybatis.type.JsonTypeHandler}：它按字符串绑定，不依赖 PostgreSQL JDBC 驱动。
  *
- * <p>目标类型支持两种描述方式：
+ * <p>目标 Java 类型用 {@link Type} 描述：
  * <ul>
- * <li>{@link Class}：适用于普通 Bean；任何带类型参数的类（集合、{@code Map}、{@code Iterable}、{@code Optional}、{@code Map.Entry}、自定义泛型容器/泛型 Bean 等）都无法在运行期保留实参，请改用 {@link TypeReference}；元素为这些类型的数组（如 {@code List<Foo>[]}）同样会被拒绝。具体集合/Map 子类如果自身没有类型参数（如 {@code class Tags extends ArrayList<String>}）仍可用 {@code Class}；{@link Class} 自身是一个例外，按标量目标处理；</li>
- * <li>{@link TypeReference}：保留完整泛型信息，例如 {@code new TypeReference<List<Foo>>() {}}。</li>
+ * <li>{@link Class}：普通 Bean、标量，以及没有类型参数的集合/Map 子类；</li>
+ * <li>{@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType}：集合、{@code Map}、{@code Optional}、自定义泛型容器，以及它们的数组（如 {@code List<Foo>[]}）。</li>
  * </ul>
+ * MyBatis 3.6.0 起，{@code @Result} / {@code #{..., typeHandler=...}} 会把属性或参数的完整泛型类型传给 {@code (Type)} 构造器，因此 {@link JsonTypeHandler} / {@link JsonbTypeHandler} 一个类就能覆盖所有目标类型。
  *
  * <p>未显式传入 {@link ObjectMapper} 的构造器在构造时取 {@link ObjectMapperHolder#getDefault()}。
  * 应用应在 MyBatis 解析 mapper、构造处理器之前调用一次 {@link ObjectMapperHolder#setDefault(ObjectMapper)} 配置默认 mapper；之后再替换只影响新构造的处理器。显式传入 mapper 的构造器不受全局配置影响。
@@ -45,16 +46,21 @@ public abstract class BaseJsonTypeHandler<T> extends me.acomma.duck.mybatis.type
     }
 
     protected BaseJsonTypeHandler(ObjectMapper objectMapper, String postgresType, Class<T> type) {
+        this(objectMapper, postgresType, (Type) type);
+    }
+
+    /**
+     * MyBatis 3.6.0 起按属性/参数的泛型类型反射调用子类的 {@code (Type)} 构造器，集合、{@code Map} 等泛型目标不需要再写固定类型的子类。
+     *
+     * @param postgresType PostgreSQL 列类型，只能是 {@code json} 或 {@code jsonb}
+     * @param type         目标 Java 类型，可以是 {@link Class}、{@link java.lang.reflect.ParameterizedType}、{@link java.lang.reflect.GenericArrayType}
+     */
+    protected BaseJsonTypeHandler(String postgresType, Type type) {
+        this(ObjectMapperHolder.getDefault(), postgresType, type);
+    }
+
+    protected BaseJsonTypeHandler(ObjectMapper objectMapper, String postgresType, Type type) {
         super(objectMapper, type);
-        this.postgresType = requirePostgresType(postgresType);
-    }
-
-    protected BaseJsonTypeHandler(String postgresType, TypeReference<T> typeReference) {
-        this(ObjectMapperHolder.getDefault(), postgresType, typeReference);
-    }
-
-    protected BaseJsonTypeHandler(ObjectMapper objectMapper, String postgresType, TypeReference<T> typeReference) {
-        super(objectMapper, typeReference);
         this.postgresType = requirePostgresType(postgresType);
     }
 

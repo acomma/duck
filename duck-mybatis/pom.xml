@@ -13,7 +13,7 @@
     <artifactId>duck-mybatis</artifactId>
 
     <properties>
-        <mybatis.version>3.5.19</mybatis.version>
+        <mybatis.version>3.6.0</mybatis.version>
     </properties>
 
     <dependencies>

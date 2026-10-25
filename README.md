@@ -65,15 +65,24 @@ duck:
 
 - `type.postgres.JsonTypeHandler` / `type.postgres.JsonbTypeHandler`：PostgreSQL 原生 `json` / `jsonb` 列，按 `PGobject` 绑定；
 - `type.JsonTypeHandler`：以文本保存 JSON 的列，包括 PostgreSQL 的 `text` / `varchar`、MySQL 5.7.8+ 的 `JSON`（MySQL 没有 `jsonb`）、MariaDB 的 `JSON`。它按字符串绑定，不依赖 PostgreSQL JDBC 驱动。
-- 两个包都预置了常用元素类型的集合处理器：文本/MySQL 用根包的 `type.<元素类型>ListJsonTypeHandler`，PostgreSQL 原生 `json` / `jsonb` 用 `type.postgres.<元素类型>ListJsonTypeHandler` / `<元素类型>ListJsonbTypeHandler`。每个预置集合处理器都有无参和 `(ObjectMapper)` 两个构造器：无参使用全局默认 mapper，`(ObjectMapper)` 供直接实例化或自定义子类使用；MyBatis 的注解/XML 仍走无参构造器，单字段换 mapper 写一个 `super(mapper)` 的小子类即可。
 
-两个包都使用 `JsonTypeHandler` / `BaseJsonTypeHandler` / `<元素类型>ListJsonTypeHandler` 等短名，靠包名区分；同一个文件同时使用 PG 原生列和文本列时，其中一个需要写全限定名。
+每组只有**一个**处理器，Bean、集合、`Map`、泛型数组都用它：MyBatis 3.6.0 的 `TypeHandlerRegistry` 会优先调用处理器的 `(java.lang.reflect.Type)` 构造器，并把属性或参数的完整泛型类型传进来（`@Result` / XML `<result>` / 自动映射取 Bean 的 setter 泛型，`#{...}` 取属性或 `@Param` 的泛型）。因此不需要 `TypeReference`，也不需要为每种元素类型准备固定类型的子类：
 
-`Class` 构造器适用于普通 Bean；任何带类型参数的类（集合、`Map`、`Iterable`、`Optional`、`Map.Entry`、自定义泛型 Bean/容器）以及元素为它们的数组（如 `List<Foo>[]`）都无法保留泛型信息，需要用 `TypeReference` 自定义处理器（`Class` 自身带类型参数，但仍按标量目标用 `Class` 构造器）。具体集合/`Map` 子类如果自身没有类型参数（如 `class Tags extends ArrayList<String>`）可以用 `Class`。
+```java
+@Results(id = "foo", value = {
+        @Result(column = "payload", property = "payload", typeHandler = JsonbTypeHandler.class),   // Payload
+        @Result(column = "children", property = "children", typeHandler = JsonbTypeHandler.class), // List<Foo>
+        @Result(column = "extra", property = "extra", typeHandler = JsonbTypeHandler.class),       // Map<String, Object>
+})
+```
 
-`Map`/`Set` 不预置：JSON object 已知结构优先具体类，动态对象才用 `Map<String,Object>`；JSON array 优先 `List`，Set 的顺序/去重语义与 JSON 数组不完全一致。需要时用 `TypeReference` 自定义，示例见 `type/package-info`。
+两个包都使用 `JsonTypeHandler` / `BaseJsonTypeHandler` 等短名，靠包名区分；同一个文件同时使用 PG 原生列和文本列时，其中一个需要写全限定名。
 
-处理器由 MyBatis 反射实例化，只能在 `@Results` / XML 中显式指定；未显式传入 `ObjectMapper` 的处理器在构造时取 `ObjectMapperHolder.getDefault()`。应用只需在启动早期、MyBatis 解析 mapper 和构造处理器之前调用一次 `setDefault`；之后再替换只影响新构造的处理器。Spring Boot 放在 `ConfigurationCustomizer` 里执行：
+目标类型就是构造器收到的 `java.lang.reflect.Type`：`Class` 适用于普通 Bean、标量以及没有类型参数的集合/Map 子类（如 `class Tags extends ArrayList<String>`）；集合、`Map`、`Iterable`、`Optional`、`Map.Entry`、自定义泛型容器，以及它们的数组（如 `List<Foo>[]`）由 `ParameterizedType` / `GenericArrayType` 描述。用原始 `Class` 描述带类型参数的类仍会被拒绝（`List.class` 不带元素类型，静默按 `List<Object>` 处理只会把错误推迟到读取阶段），正常写法不会触发。
+
+`Map`/`Set` 直接声明字段的泛型类型即可，不需要单独的实现：JSON object 已知结构优先具体类，动态对象才用 `Map<String,Object>`；JSON array 优先 `List`，Set 的顺序/去重语义与 JSON 数组不完全一致。
+
+处理器由 MyBatis 反射实例化，只能在 `@Results` / XML / `#{...}` 中显式指定，**不要**通过 `mybatis.type-handlers-package` 扫描（注册键无法解析成具体类型，会被当成 `Object` 注册成“智能处理器”，把普通的 `Map`/`List` 属性也变成 JSON 处理器）。未显式传入 `ObjectMapper` 的处理器在构造时取 `ObjectMapperHolder.getDefault()`。应用只需在启动早期、MyBatis 解析 mapper 和构造处理器之前调用一次 `setDefault`；之后再替换只影响新构造的处理器。Spring Boot 放在 `ConfigurationCustomizer` 里执行：
 
 ```java
 @Bean
@@ -86,7 +95,7 @@ ConfigurationCustomizer duckJsonObjectMapperCustomizer() {
 
 全局默认值只有一份，且是 JVM/ClassLoader 级别的。不同 `SqlSessionFactory` 或单个字段需要不同 mapper 时，不要依赖全局默认值；用显式传入 `ObjectMapper` 的处理器构造器，或写一个调用 `super(mapper, type)` 的处理器子类。一个 `SqlSessionFactory` + 动态数据源仍然只有一份配置；不同物理库需要不同 JSON 格式时，应拆成多个工厂，并给每个工厂的处理器显式传入各自的 mapper。
 
-普通 MyBatis、集合列、日期时间约定与限制等完整说明见 [`type/package-info.java`](duck-mybatis/src/main/java/me/acomma/duck/mybatis/type/package-info.java) 与 [`type.postgres/package-info.java`](duck-mybatis/src/main/java/me/acomma/duck/mybatis/type/postgres/package-info.java)。
+普通 MyBatis、目标类型、容器建模、日期时间约定与限制等完整说明见 [`type/package-info.java`](duck-mybatis/src/main/java/me/acomma/duck/mybatis/type/package-info.java) 与 [`type.postgres/package-info.java`](duck-mybatis/src/main/java/me/acomma/duck/mybatis/type/postgres/package-info.java)。
 
 ## 缓存扩展
 
