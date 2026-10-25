@@ -21,6 +21,7 @@
 
     <modules>
         <module>duck-util</module>
+        <module>duck-mybatis</module>
         <module>duck-boot</module>
     </modules>
 
